@@ -21,7 +21,7 @@ git add .
 commit_message="$1"
 if [ -z "$commit_message" ]; then
   echo "No commit message provided. Using default message."
-  commit_message="Update build"
+  commit_message="Update movie"
 fi
 echo "Committing changes with message: '$commit_message'"
 git commit -m "$commit_message"
