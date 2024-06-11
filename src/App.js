@@ -54,7 +54,7 @@ const average = (arr) =>
 const KEY = "b966a84a";
 
 export default function App() {
-  const [query, setQuery] = useState("interstellar");
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -78,12 +78,15 @@ export default function App() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchMovies = async () => {
       try {
         setIsLoading(true);
         setError(null);
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          { signal: controller.signal }
         );
 
         if (!res.ok) throw new Error("Error fetching movies");
@@ -93,9 +96,12 @@ export default function App() {
         if (data.Response === "False") throw new Error("Movie not found");
 
         setMovies(data.Search);
+        setError(null);
       } catch (err) {
         console.error(err.message);
-        setError(err.message);
+        if (err.name !== "AbortError") {
+          setError(err.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -105,7 +111,13 @@ export default function App() {
       setError(null);
       return;
     }
+
+    handleCloseMovie();
     fetchMovies();
+
+    return () => {
+      controller.abort();
+    };
   }, [query]);
 
   return (
@@ -311,6 +323,17 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
     onAddWatched(newWatchedMovie);
     onCloseMovie();
   };
+  useEffect(() => {
+    const callback = (e) => {
+      if (e.code === "Escape") {
+        onCloseMovie();
+      }
+    };
+    document.addEventListener("keydown", callback);
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [onCloseMovie]);
 
   useEffect(() => {
     const getMovieDetails = async () => {
