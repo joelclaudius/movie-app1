@@ -324,6 +324,16 @@ const MovieDetails = ({ selectedId, onCloseMovie, onAddWatched, watched }) => {
     };
     getMovieDetails();
   }, [selectedId]);
+
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+
+    return () => {
+      document.title = "ke-Devs Movies";
+    };
+  }, [title]);
+
   return (
     <div className="details">
       {isLoading ? (
