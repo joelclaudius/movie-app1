@@ -4,7 +4,9 @@ import { useMovies } from "./useMovies";
 import { useLocalStorageState } from "./useLocalStorageState";
 import { useKey } from "./useKey";
 
-const KEY = "b966a84a";
+
+const KEY = process.env.REACT_APP_IMDB_KEY;
+console.log(KEY);
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);

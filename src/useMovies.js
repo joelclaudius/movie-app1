@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const KEY = "b966a84a";
+const KEY = process.env.REACT_APP_IMDB_KEY;
 
 export function useMovies(query, callback) {
   const [movies, setMovies] = useState([]);
